@@ -2,29 +2,69 @@ const canvas = document.getElementById('pieChart');
 const ctx = canvas.getContext('2d');
 
 // Sample data
-const data = [30, 50, 20 , 20 , 20];  // Values for each segment
-const colors = ['#ff6384', '#36a2eb', '#ffce56' , '#ffbe56' , '#ffae56'];  // Colors for each segment
+const data = [30, 50, 20];  // Values for each segment
+const colors = ['#ff6384', '#36a2eb', '#ffce56'];  // Colors for each segment
 
 // Calculate total
 const total = data.reduce((acc, val) => acc + val, 0);
 
-// Starting angle in radians
+// Store the angles for hover detection
+let angles = [];
 let startAngle = 0;
 
-data.forEach((value, index) => {
-  // Calculate the end angle
-  const endAngle = startAngle + (value / total) * 2 * Math.PI;
+// Draw the pie chart
+function drawPieChart(scaleIndex = 3) {
+    angles = [];
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+    startAngle = 0; // Reset start angle for redrawing
 
-  // Set the color
-  ctx.fillStyle = colors[index];
+    data.forEach((value, index) => {
+        const endAngle = startAngle + (value / total) * 2 * Math.PI;
+        console.log(index , 'ndez')
+        // Calculate radius based on whether it's the hovered segment
+        const radius = scaleIndex === index ? (canvas.height / 2) * 1.1 : (canvas.height / 2); // Increase size for hovered segment
 
-  // Draw the segment
-  ctx.beginPath();
-  ctx.moveTo(canvas.width / 3, canvas.height / 3);  // Center of the pie chart
-  ctx.arc(canvas.width / 3, canvas.height / 3, canvas.height / 3, startAngle, endAngle);
-  ctx.closePath();
-  ctx.fill();
+        // Draw the segment
+        ctx.fillStyle = colors[index];
+        ctx.beginPath();
+        ctx.moveTo(canvas.width / 2, canvas.height / 2);  // Center of the pie chart
+        ctx.arc(canvas.width / 2, canvas.height / 2, radius, startAngle, endAngle);
+        ctx.closePath();
+        ctx.fill();
 
-  // Update start angle for next segment
-  startAngle = endAngle;
+        // Store the start and end angles for this segment
+        angles.push({ start: startAngle, end: endAngle, color: colors[index] });
+
+        // Update start angle for the next segment
+        startAngle = endAngle;
+    });
+}
+
+// Initial draw
+drawPieChart();
+
+// Mouse move event
+canvas.addEventListener('mousemove', (event) => {
+    console.log('hello')
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+
+    // Calculate the angle from the center of the pie chart to the mouse position
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const dx = mouseX - centerX;
+    const dy = mouseY - centerY;
+    const mouseAngle = Math.atan2(dy, dx) + Math.PI; // Normalize to [0, 2PI]
+
+    // Determine which segment the mouse is over
+    let hoveredIndex = -1;
+    angles.forEach((angle, index) => {
+        if (mouseAngle >= angle.start && mouseAngle < angle.end) {
+            hoveredIndex = index; // Set hovered index
+        }
+    });
+
+    // Redraw the pie chart with the hovered segment enlarged
+    drawPieChart(hoveredIndex);
 });
