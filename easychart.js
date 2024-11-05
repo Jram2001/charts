@@ -20,10 +20,9 @@ function drawPieChart(scaleIndex = 3) {
 
     data.forEach((value, index) => {
         const endAngle = startAngle + (value / total) * 2 * Math.PI;
-        console.log(index , 'ndez')
         // Calculate radius based on whether it's the hovered segment
         const radius = scaleIndex === index ? (canvas.height / 2) * 1.1 : (canvas.height / 2); // Increase size for hovered segment
-
+        
         // Draw the segment
         ctx.fillStyle = colors[index];
         ctx.beginPath();
@@ -45,7 +44,6 @@ drawPieChart();
 
 // Mouse move event
 canvas.addEventListener('mousemove', (event) => {
-    console.log('hello')
     const rect = canvas.getBoundingClientRect();
     const mouseX = event.clientX - rect.left;
     const mouseY = event.clientY - rect.top;
@@ -55,8 +53,7 @@ canvas.addEventListener('mousemove', (event) => {
     const centerY = canvas.height / 2;
     const dx = mouseX - centerX;
     const dy = mouseY - centerY;
-    const mouseAngle = Math.atan2(dy, dx) + Math.PI; // Normalize to [0, 2PI]
-
+    const mouseAngle = Math.atan2(dy, dx) > 0 ? Math.atan2(dy, dx) : Math.atan2(dy, dx) + 2* Math.PI; // Normalize to [0, 2PI]
     // Determine which segment the mouse is over
     let hoveredIndex = -1;
     angles.forEach((angle, index) => {
@@ -64,7 +61,6 @@ canvas.addEventListener('mousemove', (event) => {
             hoveredIndex = index; // Set hovered index
         }
     });
-
     // Redraw the pie chart with the hovered segment enlarged
     drawPieChart(hoveredIndex);
 });
