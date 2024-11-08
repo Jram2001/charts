@@ -12,5 +12,5 @@ export function intializeChart(element:HTMLCanvasElement , chartOptions : pieCha
     console.log('consoled')
 } 
 
-// Expose the function globally
+// Expose the function globally 
 (window as any).initializeChart = intializeChart;
