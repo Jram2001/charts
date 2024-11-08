@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Pie Chart</title>
+</head>
+<body>
+<canvas id="pieChart" width="400" height="400"></canvas>
+
+<script src="./dist/bundle.js"></script>
+<script>
+    // Use the pie chart library after it's included
+    const chartOptions = {
+        chartType: 'pieChart',  // Specify the chart type
+        data: [30, 50, 20],  // Your chart data
+        colors: ['#ff6384', '#36a2eb', '#ffce56'],
+        animationDuration: 500
+    };
+
+    const canvas = document.getElementById('pieChart');
+    initializeChart(canvas, chartOptions);  // Initialize the chart
+</script>
+
+</body>
+</html>
